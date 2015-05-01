@@ -24,7 +24,7 @@ class InvalidServerKey(FlaskRollbarException):
 
 class Rollbar(object):
     '''
-    Doc string
+    Basic Rollbar Implementation
     '''
     def __init__(self, app=None, request_handler=None):
         self.custom_request_handler = request_handler
@@ -48,7 +48,7 @@ class Rollbar(object):
             if self._enabled:
 
                 # Example taken from https://github.com/rollbar/rollbar-flask-example/blob/master/hello.py
-                rollbar.init(
+                self._rb = rollbar.init(
                     self._server_key,
                     self._environment,
                     root=os.path.dirname(os.path.realpath(__file__)),  # server root directory, makes tracebacks prettier
@@ -63,3 +63,9 @@ class Rollbar(object):
             if not hasattr(self.custom_request_handler, 'rollbar_person'):
                 raise InvalidRollbarRequest("Custom request handler does not have a rollbar person property")
             app.request_class = self.custom_request_handler
+
+        def report_message(self, message, level):
+            return self._rb.report_message(message, level)
+
+        def report_exc_info(self):
+            return self._rb.report_exc_info()
