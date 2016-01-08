@@ -65,7 +65,7 @@ class Rollbar(object):
             app.request_class = self.custom_request_handler
 
     def report_message(self, message, level):
-        return self._rb.report_message(message, level)
+        return rollbar.report_message(message, level)
 
     def report_exc_info(self):
-        return self._rb.report_exc_info()
+        return rollbar.report_exc_info()
