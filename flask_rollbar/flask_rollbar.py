@@ -64,8 +64,8 @@ class Rollbar(object):
                 raise InvalidRollbarRequest("Custom request handler does not have a rollbar person property")
             app.request_class = self.custom_request_handler
 
-        def report_message(self, message, level):
-            return self._rb.report_message(message, level)
+    def report_message(self, message, level):
+        return self._rb.report_message(message, level)
 
-        def report_exc_info(self):
-            return self._rb.report_exc_info()
+    def report_exc_info(self):
+        return self._rb.report_exc_info()
