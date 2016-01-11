@@ -36,10 +36,8 @@ class FlaskRollbarTestCase(unittest.TestCase):
             pass
 
         with patch('rollbar.contrib.flask.report_exception', spec=foo) as p:
-            with self.assertRaises(IndexError):
-                self.app.get('/')
-
-                self.assertEquals(p.called, True)
+            self.assertRaises(IndexError, self.app.get('/'))
+            self.assertEquals(p.called, True)
 
     def tearDown(self):
         pass
