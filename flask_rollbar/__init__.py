@@ -7,3 +7,10 @@ from .flask_rollbar import (
     RequestAlreadyModified,
     InvalidRollbarRequest,
     InvalidServerKey)
+
+__all__ = (
+    Rollbar,
+    FlaskRollbarException,
+    RequestAlreadyModified,
+    InvalidRollbarRequest,
+    InvalidServerKey)

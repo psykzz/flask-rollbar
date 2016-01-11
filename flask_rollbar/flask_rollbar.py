@@ -28,19 +28,22 @@ class Rollbar(object):
     '''
     def __init__(self, app=None, request_handler=None):
         self.custom_request_handler = request_handler
+        self._setup_complete = False
         if app is not None:
             self.init_app(app)
 
     def init_app(self, app):
+        self.setup_config(app)
+        self.setup_app(app)
+        self.register_handler(app)
+        self._setup_complete = True
+
+    def setup_config(self, app):
 
         # Basic Configuration settings.
-        self._enabled = bool(app.config.get(
-            'ROLLBAR_ENABLED',
-            os.environ.get('ROLLBAR_ENABLED', False)))
+        self._enabled = app.config.get('ROLLBAR_ENABLED', False)
 
-        self._server_key = app.config.get(
-            'ROLLBAR_SERVER_KEY',
-            os.environ.get('ROLLBAR_SERVER_KEY', False))
+        self._server_key = app.config.get('ROLLBAR_SERVER_KEY', False)
 
         self._environment = app.config.get(
             'ROLLBAR_ENVIRONMENT',
@@ -52,6 +55,22 @@ class Rollbar(object):
 
         if self._enabled and not self._server_key:
             raise InvalidServerKey("Invalid Rollbar server key provided")
+
+    def setup_app(self, app):
+
+        if self.custom_request_handler is not None:
+            if not self._allow_new_request and app.request_class is not OriginalFlaskRequest:
+                raise RequestAlreadyModified("The original request was already modified by another system")
+
+            if not hasattr(self.custom_request_handler, 'rollbar_person'):
+                raise InvalidRollbarRequest("Custom request handler does not have a rollbar person property")
+            app.request_class = self.custom_request_handler
+
+    def register_handler(self, app):
+
+        # We don't want to create an additional request handler here.
+        if self._setup_complete:
+            return
 
         @app.before_first_request
         def init_rollbar():
@@ -66,14 +85,6 @@ class Rollbar(object):
                     allow_logging_basic_config=False)  # flask already sets up logging
 
                 got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
-
-        if self.custom_request_handler is not None:
-            if not self._allow_new_request and app.request_class is not OriginalFlaskRequest:
-                raise RequestAlreadyModified("The original request was already modified by another system")
-
-            if not hasattr(self.custom_request_handler, 'rollbar_person'):
-                raise InvalidRollbarRequest("Custom request handler does not have a rollbar person property")
-            app.request_class = self.custom_request_handler
 
     def report_message(self, message, level):
         return report_message(message, level)
