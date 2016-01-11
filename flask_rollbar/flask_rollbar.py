@@ -1,5 +1,5 @@
 import os
-import rollbar
+from rollbar import init, report_message, report_exc_info
 import rollbar.contrib.flask
 
 from flask import got_request_exception
@@ -34,9 +34,9 @@ class Rollbar(object):
     def init_app(self, app):
 
         # Basic Configuration settings.
-        self._enabled = app.config.get(
+        self._enabled = bool(app.config.get(
             'ROLLBAR_ENABLED',
-            os.environ.get('ROLLBAR_ENABLED', False))
+            os.environ.get('ROLLBAR_ENABLED', False)))
 
         self._server_key = app.config.get(
             'ROLLBAR_SERVER_KEY',
@@ -59,7 +59,7 @@ class Rollbar(object):
             if self._enabled:
 
                 # Example taken from https://github.com/rollbar/rollbar-flask-example/blob/master/hello.py
-                self._rb = rollbar.init(
+                self._rb = init(
                     self._server_key,
                     self._environment,
                     root=os.path.dirname(os.path.realpath(__file__)),  # server root directory, makes tracebacks prettier
@@ -76,7 +76,7 @@ class Rollbar(object):
             app.request_class = self.custom_request_handler
 
     def report_message(self, message, level):
-        return rollbar.report_message(message, level)
+        return report_message(message, level)
 
     def report_exc_info(self):
-        return rollbar.report_exc_info()
+        return report_exc_info()
