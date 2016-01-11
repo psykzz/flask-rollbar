@@ -31,7 +31,7 @@ class TestCodeComplexity(unittest.TestCase):
         result = flake8style.check_files()
 
         self.assertEqual(result.total_errors, 0,
-                         "Code found to be too complex")
+                         "Code found to be too complex or failing PEP8")
 
 if __name__ == '__main__':
     unittest.main()

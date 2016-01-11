@@ -2,3 +2,4 @@ flask
 rollbar
 pep8
 flake8
+blinker

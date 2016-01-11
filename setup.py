@@ -40,7 +40,7 @@ setup(
     author_email='matt.daemon660@gmail.com',
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['flask', 'rollbar'],
+    install_requires=['flask', 'rollbar', 'blinker'],
     tests_require=['nose'],
     extras_require={
         'test': ['nosetests'],
