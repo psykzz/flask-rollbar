@@ -34,10 +34,21 @@ class Rollbar(object):
     def init_app(self, app):
 
         # Basic Configuration settings.
-        self._enabled = app.config.get('ROLLBAR_ENABLED', False)
-        self._server_key = app.config.get('ROLLBAR_SERVER_KEY', False)
-        self._environment = app.config.get('ROLLBAR_ENVIRONMENT', 'development')
-        self._allow_new_request = app.config.get('ROLLBAR_OVERWRITE_REQUEST', False)
+        self._enabled = app.config.get(
+            'ROLLBAR_ENABLED',
+            os.environ.get('ROLLBAR_ENABLED', False))
+
+        self._server_key = app.config.get(
+            'ROLLBAR_SERVER_KEY',
+            os.environ.get('ROLLBAR_SERVER_KEY', False))
+
+        self._environment = app.config.get(
+            'ROLLBAR_ENVIRONMENT',
+            'development')
+
+        self._allow_new_request = app.config.get(
+            'ROLLBAR_OVERWRITE_REQUEST',
+            False)
 
         if self._enabled and not self._server_key:
             raise InvalidServerKey("Invalid Rollbar server key provided")

@@ -43,7 +43,7 @@ setup(
     install_requires=['flask', 'rollbar'],
     tests_require=['nose'],
     extras_require={
-        'test': ['nose'],
+        'test': ['nosetests'],
     },
     license='MIT',
     use_2to3=True,
