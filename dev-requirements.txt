@@ -1,6 +1,5 @@
-flask
-rollbar
-pep8
-flake8
-mock
-blinker
+flask==0.11.1
+rollbar==0.13.7
+pep8==1.7.0
+flake8==3.0.4
+blinker==1.4
