@@ -20,8 +20,10 @@ if sys.version_info[:2] == (2, 6):
 class TestCodeComplexity(unittest.TestCase):
     def test_flake8_conformance(self):
 
-        flake8style = engine.get_style_guide(max_complexity=6)
-        flake8style.options.ignore = flake8style.options.ignore + tuple(['E501'])
+        flake8style = engine.get_style_guide(
+            ignore=['E501'], 
+            max_complexity=6
+        )
 
         directory = 'flask_rollbar'
         self.assertEqual(os.path.isdir(directory), True,
