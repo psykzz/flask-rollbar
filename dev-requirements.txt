@@ -1,5 +1,5 @@
 flask
 rollbar
 pep8
-flake8
+flake8==3.0.4
 blinker==1.4
