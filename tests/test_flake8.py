@@ -5,7 +5,7 @@ import unittest
 import os
 import sys
 
-from flake8 import engine
+from flake8.api import legacy as engine
 
 if sys.version_info[0] == 3:
     unicode = str
@@ -27,9 +27,7 @@ class TestCodeComplexity(unittest.TestCase):
         self.assertEqual(os.path.isdir(directory), True,
                          "Invalid test directory '%s'. You need to update test_flake8.py" % directory)
 
-        flake8style._styleguide.input_dir(directory)
-        result = flake8style.check_files()
-
+        result = flake8style.check_files(directory)
         self.assertEqual(result.total_errors, 0,
                          "Code found to be too complex or failing PEP8")
 
