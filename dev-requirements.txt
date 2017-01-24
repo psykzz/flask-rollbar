@@ -3,4 +3,4 @@ rollbar==0.13.10
 pep8==1.7.0
 flake8==3.0.4
 blinker==1.4
-mock
+mock==2.0.0
