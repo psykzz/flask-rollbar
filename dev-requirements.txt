@@ -1,4 +1,4 @@
-flask==0.11.1
+flask==0.12
 rollbar==0.13.10
 pep8==1.7.0
 flake8==3.0.4
