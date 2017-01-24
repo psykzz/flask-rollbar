@@ -29,7 +29,13 @@ class TestCodeComplexity(unittest.TestCase):
         self.assertEqual(os.path.isdir(directory), True,
                          "Invalid test directory '%s'. You need to update test_flake8.py" % directory)
 
-        result = flake8style.check_files(directory)
+        # Get all the files to check
+        files = []
+        for dirpath, dirnames, filenames in os.walk(directory):
+            for filename in [f for f in filenames if f.endswith(".py")]:
+                files +=  [os.path.join(dirpath, filename)]
+                
+        result = flake8style.check_files(files)
         self.assertEqual(result.total_errors, 0,
                          "Code found to be too complex or failing PEP8")
 
