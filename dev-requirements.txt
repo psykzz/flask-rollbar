@@ -1,6 +1,6 @@
 flask==0.12.2
 rollbar==0.13.12
 pep8==1.7.0
-flake8==3.3.0
+flake8==3.4.1
 blinker==1.4
 mock==2.0.0
