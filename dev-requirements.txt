@@ -1,5 +1,5 @@
 flask==0.12.2
-rollbar==0.13.12
+rollbar==0.13.13
 pep8==1.7.0
 flake8==3.3.0
 blinker==1.4
