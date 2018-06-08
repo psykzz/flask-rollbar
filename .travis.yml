@@ -8,7 +8,7 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
-  - "3.7"
+  # - "3.7" # Not available yet
   - "pypy"
 # command to install dependencies
 install: "pip install -r dev-requirements.txt"
