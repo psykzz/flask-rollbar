@@ -1,4 +1,5 @@
 language: python
+cache: pip
 python:
   # - "2.6" # not supported by the new flake8 (ordereddict)
   - "2.7"
