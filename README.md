@@ -1,42 +1,72 @@
 # Flask Rollbar
 
-Integration for rollbar in Flask
+[Rollbar](https://rollbar.com) integration for [Flask](https://flask.palletsprojects.com/).
 
+## Installation
 
-## Example 
+```sh
+pip install flask-rollbar
+```
+
+## Requirements
+
+- Python 3.9+
+- Flask 3.0+
+
+## Usage
 
 ```python
+import os
 from flask import Flask
 from flask_rollbar import Rollbar
+
 app = Flask(__name__)
 app.config.update({
     'ROLLBAR_ENABLED': True,
     'ROLLBAR_SERVER_KEY': os.environ.get('ROLLBAR_SERVER_KEY'),
+    'ROLLBAR_ENVIRONMENT': 'production',
 })
 
-# Supports using the factory pattern as well.
 Rollbar(app)
 
-# Or
+# Or use the app factory pattern:
 # rb = Rollbar()
 # rb.init_app(app)
 
 @app.route('/')
 def index():
-  return "hello world, <a href='/error'>click here for an error</a>"
- 
+    return 'hello world'
+
 @app.route('/error')
 def error():
-  a = 1 / 0
-  return "Should never happen"
-
-app.run()
-
+    raise RuntimeError('example error — will be reported to Rollbar')
 ```
 
-## Rollbar
+## Configuration
 
-* Read more about rollbar here https://rollbar.com/
-* Live demo - https://rollbar.com/demo/demo/
+| Key | Default | Description |
+|-----|---------|-------------|
+| `ROLLBAR_ENABLED` | `False` | Enable/disable Rollbar reporting |
+| `ROLLBAR_SERVER_KEY` | — | Your Rollbar server-side access token |
+| `ROLLBAR_ENVIRONMENT` | `development` | Environment name sent to Rollbar |
+| `ROLLBAR_OVERWRITE_REQUEST` | `False` | Allow overwriting Flask's request class |
 
-## Readme is still a work in progress
+## Custom Request Handler
+
+You can pass a custom request class to expose user identity to Rollbar:
+
+```python
+from flask import Request
+
+class MyRequest(Request):
+    @property
+    def rollbar_person(self):
+        # Return a dict with id, username, or email
+        return {'id': '123', 'username': 'example'}
+
+Rollbar(app, request_handler=MyRequest)
+```
+
+## Contributing
+
+Pull requests and issues are welcome.
