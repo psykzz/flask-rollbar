@@ -23,9 +23,8 @@ class InvalidServerKey(FlaskRollbarException):
 
 
 class Rollbar(object):
-    '''
-    Basic Rollbar Implementation
-    '''
+    """Basic Rollbar integration for Flask."""
+
     def __init__(self, app=None, request_handler=None):
         self.custom_request_handler = request_handler
         self._setup_complete = False
@@ -39,52 +38,38 @@ class Rollbar(object):
         self._setup_complete = True
 
     def setup_config(self, app):
-
-        # Basic Configuration settings.
         self._enabled = app.config.get('ROLLBAR_ENABLED', False)
-
         self._server_key = app.config.get('ROLLBAR_SERVER_KEY', False)
-
-        self._environment = app.config.get(
-            'ROLLBAR_ENVIRONMENT',
-            'development')
-
-        self._allow_new_request = app.config.get(
-            'ROLLBAR_OVERWRITE_REQUEST',
-            False)
+        self._environment = app.config.get('ROLLBAR_ENVIRONMENT', 'development')
+        self._allow_new_request = app.config.get('ROLLBAR_OVERWRITE_REQUEST', False)
 
         if self._enabled and not self._server_key:
             raise InvalidServerKey("Invalid Rollbar server key provided")
 
     def setup_app(self, app):
-
         if self.custom_request_handler is not None:
             if not self._allow_new_request and app.request_class is not OriginalFlaskRequest:
-                raise RequestAlreadyModified("The original request was already modified by another system")
-
+                raise RequestAlreadyModified(
+                    "The original request was already modified by another system"
+                )
             if not hasattr(self.custom_request_handler, 'rollbar_person'):
-                raise InvalidRollbarRequest("Custom request handler does not have a rollbar person property")
+                raise InvalidRollbarRequest(
+                    "Custom request handler does not have a rollbar person property"
+                )
             app.request_class = self.custom_request_handler
 
     def register_handler(self, app):
-
-        # We don't want to create an additional request handler here.
         if self._setup_complete:
             return
 
-        @app.before_first_request
-        def init_rollbar():
-
-            if self._enabled:
-
-                # Example taken from https://github.com/rollbar/rollbar-flask-example/blob/master/hello.py
-                self._rb = init(
-                    self._server_key,
-                    self._environment,
-                    root=os.path.dirname(os.path.realpath(__file__)),  # server root directory, makes tracebacks prettier
-                    allow_logging_basic_config=False)  # flask already sets up logging
-
-                got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
+        if self._enabled:
+            self._rb = init(
+                self._server_key,
+                self._environment,
+                root=os.path.dirname(os.path.realpath(__file__)),
+                allow_logging_basic_config=False,
+            )
+            got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
     def report_message(self, message, level):
         return report_message(message, level)
